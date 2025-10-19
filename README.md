@@ -140,6 +140,67 @@ Ruby devs read Rust ports → Understand 40% of Rust syntax by osmosis.
 
 ---
 
+## Safety: Can It Segfault CRuby?
+
+**Short answer:** The architecture makes segfaults extremely difficult.
+
+**Why this is safer than C extensions:**
+
+Traditional C extensions directly manipulate Ruby VM internals:
+```c
+// ❌ "Sus" C extension pattern
+VALUE some_method(VALUE self) {
+    rb_funcall(obj, rb_intern("method"), 0);  // Calling Ruby VM
+    VALUE result = rb_str_new(...);            // Manual allocation
+    RARRAY_PTR(ary)[i] = ...;                  // Direct pointer access
+}
+```
+
+**Matryoshka FFI Hybrid pattern:**
+```rust
+// ✅ Rust core (no Ruby knowledge)
+pub fn calculate_delay(&self, attempt: u8) -> u64 {
+    // Pure math, no allocations, no Ruby types
+}
+
+// ✅ FFI layer (Magnus handles safety)
+fn calculate_delay_native(attempt: i64) -> f64 {
+    let result = core::calculate_delay(attempt as u8);
+    result as f64  // Magnus converts safely
+}
+```
+
+**Architecture guarantees:**
+
+1. **No direct Ruby VM calls** - Magnus abstracts all `rb_*` functions
+2. **No manual GC interaction** - Rust never touches Ruby's garbage collector
+3. **Only primitives cross FFI boundary** - `i64`, `f64`, `String` (copied, not borrowed)
+4. **Rust core is isolated** - `no_std` crate with no Ruby types
+5. **Type conversions are explicit** - Magnus enforces compile-time safety
+
+**Failure modes (and mitigations):**
+
+| Scenario | C Extension | Matryoshka |
+|----------|-------------|------------|
+| Panic/crash | Segfault | Magnus catches, converts to Ruby exception |
+| Bad type | Runtime crash | Compile-time error (Magnus type checking) |
+| Memory leak | Easy (forget to free) | Impossible (Rust ownership) |
+| GC bug | Holding pointers across GC | No Ruby heap access |
+| Race condition | Undefined behavior | Document thread-safety (same as Ruby) |
+
+**Compare to pg/mysql2/trilogy:**
+Those gems call C libraries (`libpq`, `libmysqlclient`) and carefully manage Ruby GC, exceptions, and memory. Much larger "sus" surface area.
+
+**Matryoshka's promise:** If the Rust core is `no_std` and only passes primitives across FFI, segfaults are **architecturally prevented**, not just "avoided by good coding."
+
+**Real example (ChronoMachines):**
+- Input: `i64`, `f64` (primitives from Ruby)
+- Computation: Pure Rust math (no allocations, no Ruby VM)
+- Output: `f64` (primitive to Ruby)
+- **No way to segfault** - no pointers, no Ruby VM access, no GC interaction
+
+---
+
 ## Pattern Decision Tree
 
 ```mermaid
