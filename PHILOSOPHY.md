@@ -107,16 +107,18 @@ You're building IoT/embedded systems (ESP32, STM32, etc.). You need the **same l
 **History:** This pattern evolved from years of using Go + Ruby.
 
 **Go problems:**
-1. **No crate concept** - Go modules aren't standalone libraries
-2. **Awkward structure** - Go code doesn't live naturally in gem root
-3. **No FFI ecosystem** - Harder to bridge Ruby ↔ Go
-4. **No `no_std`** - Can't easily target bare-metal
+1. **Two garbage collectors in one process** - Ruby has a GC, Go has a GC. They compete for resources, cause unpredictable pause times, and don't coordinate. Memory overhead doubles.
+2. **No crate concept** - Go modules aren't standalone libraries
+3. **Awkward structure** - Go code doesn't live naturally in gem root
+4. **No FFI ecosystem** - Harder to bridge Ruby ↔ Go
+5. **No `no_std`** - Can't easily target bare-metal
 
 **Rust advantages:**
-1. **Crates are real libraries** - Publishable, reusable, independent
-2. **Natural structure** - `ext/gem_native/core/` is a proper crate
-3. **Magnus FFI** - Seamless Ruby ↔ Rust bridge
-4. **`no_std` support** - Compiles to ESP32 out of the box
+1. **No garbage collector** - Rust uses compile-time ownership. Zero GC overhead, zero pause times, no runtime conflicts with Ruby's GC.
+2. **Crates are real libraries** - Publishable, reusable, independent
+3. **Natural structure** - `ext/gem_native/core/` is a proper crate
+4. **Magnus FFI** - Seamless Ruby ↔ Rust bridge
+5. **`no_std` support** - Compiles to ESP32 out of the box
 
 **Result:** Rust + Ruby is what Go + Ruby tried to be.
 
