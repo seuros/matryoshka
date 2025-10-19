@@ -765,7 +765,7 @@ Users installing the gem will:
 
 ## Real-World Example: ChronoMachines
 
-See the reference implementation: [github.com/state-machines/chrono_machines](https://github.com/state-machines/chrono_machines)
+See the reference implementation: [github.com/seuros/chrono_machines](https://github.com/seuros/chrono_machines)
 
 **Stats:**
 - 65x speedup on retry delay calculations

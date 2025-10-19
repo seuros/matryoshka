@@ -172,7 +172,7 @@ flowchart TD
 ## Examples
 
 ### FFI Hybrid
-- **[chrono_machines](https://github.com/state-machines/chrono_machines)** - Retry logic with exponential backoff (reference implementation)
+- **[chrono_machines](https://github.com/seuros/chrono_machines)** - Retry logic with exponential backoff (reference implementation)
 - `examples/simple_parser/` - Minimal string parsing example
 - `examples/embedded_blinker/` - ESP32 using shared Rust core
 
