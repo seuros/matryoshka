@@ -135,7 +135,7 @@ You're building IoT/embedded systems (ESP32, STM32, etc.). You need the **same l
 "This works at 1x speed. At 65x speed, it's amazing. But if Rust isn't available, 1x is still acceptable."
 
 **Why this matters:**
-- JRuby users get pure Ruby (no FFI)
+- Native extension unavailable? Pure Ruby fallback (Magnus uses C extensions, unsupported by JRuby)
 - Cargo missing? No problem (graceful fallback)
 - Development speed prioritized over runtime speed
 

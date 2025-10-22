@@ -1,0 +1,17 @@
+[package]
+name = "matryoshka-demo-core"
+version = "0.1.0"
+edition = "2024"
+
+[features]
+default = []
+std = []
+
+[dependencies]
+# No dependencies for no_std core
+
+[dev-dependencies]
+
+[lib]
+name = "matryoshka_demo_core"
+path = "src/lib.rs"

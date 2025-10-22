@@ -1,0 +1,33 @@
+# frozen_string_literal: true
+
+require 'bundler/gem_tasks'
+require 'rake/testtask'
+
+Rake::TestTask.new(:test) do |t|
+  t.libs << 'test'
+  t.libs << 'lib'
+  t.test_files = FileList['test/**/*_test.rb']
+end
+
+task default: :test
+
+# Compile native extension
+task :compile do
+  Dir.chdir('ext/matryoshka_demo_native') do
+    ruby 'extconf.rb'
+    sh 'make'
+  end
+end
+
+# Clean build artifacts
+task :clean do
+  sh 'rm -rf ext/matryoshka_demo_native/target'
+  sh 'rm -f ext/matryoshka_demo_native/Makefile'
+  sh 'rm -rf lib/matryoshka_demo_native'
+  sh 'rm -rf tmp'
+end
+
+# Benchmark
+task :bench do
+  ruby '-I', 'lib', 'test/benchmark.rb'
+end

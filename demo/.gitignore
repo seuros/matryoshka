@@ -1,0 +1,18 @@
+# Build artifacts
+ext/matryoshka_demo_native/Makefile
+*.bundle
+*.dSYM/
+lib/matryoshka_demo_native/
+
+# Rust build
+target/
+Cargo.lock
+
+# Java build artifacts
+ext/jvm/classes/
+*.class
+
+# Native libraries
+*.so
+*.dylib
+*.dll

@@ -1,0 +1,6 @@
+[workspace]
+members = ["core", "ffi"]
+resolver = "2"
+
+[workspace.dependencies]
+matryoshka-demo-core = { path = "./core" }

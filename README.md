@@ -68,7 +68,7 @@ graph LR
 
 **Ruby usage:**
 ```ruby
-# Works everywhere (JRuby, no Cargo, etc.)
+# Works everywhere (no Cargo, compilation fails gracefully)
 ChronoMachines.retry(max_attempts: 5, base_delay: 0.1) do
   risky_operation
 end
@@ -339,7 +339,7 @@ matryoshka/
 
 ### ChronoMachines (FFI Hybrid)
 - **65x faster** retry delay calculations
-- Works on **JRuby** (pure Ruby fallback)
+- **Graceful fallback** when native extension unavailable (Magnus uses C extensions, not supported by JRuby)
 - Rust core compiles to **ESP32** (same retry logic in firmware)
 - Zero changes to public API
 
