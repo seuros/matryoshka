@@ -1,0 +1,3 @@
+[tools]
+java = "latest"
+ruby = "truffleruby-25.0.0"

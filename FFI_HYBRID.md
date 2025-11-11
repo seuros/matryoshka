@@ -205,6 +205,7 @@ magnus = { version = "0.7", features = ["embed"] }
 - Type conversions happen here (Ruby ↔ Rust)
 - Error handling (Ruby exceptions)
 - Keep logic minimal (just bridging)
+- `extconf.rb` must always succeed (write a stub Makefile if Cargo/rb_sys missing) so gem install never explodes
 
 ---
 
@@ -236,8 +237,14 @@ unless cargo_available?
   exit 0
 end
 
-# Build with rb-sys
-require 'rb_sys/mkmf'
+# Build with rb-sys (graceful fallback if dependency missing)
+begin
+  require 'rb_sys/mkmf'
+rescue LoadError
+  warn 'rb_sys gem missing! Falling back to pure Ruby backend.'
+  File.write('Makefile', "all:\n\t@echo 'Skipping'\ninstall:\n\t@echo 'Skipping'\n")
+  exit 0
+end
 
 create_rust_makefile('my_gem_native/my_gem_native') do |r|
   r.ext_dir = 'ffi'
