@@ -1,0 +1,65 @@
+name: Test
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+jobs:
+  test:
+    name: ${{ matrix.ruby }} (${{ matrix.backend }})
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - ruby: '3.4'
+            backend: 'rust'
+          - ruby: '3.4'
+            backend: 'pure-ruby'
+          - ruby: 'jruby'
+            backend: 'java'
+          - ruby: 'truffleruby'
+            backend: 'graalvm'
+
+    steps:
+      - uses: actions/checkout@v5
+
+      - name: Set up Ruby ${{ matrix.ruby }}
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: ${{ matrix.ruby }}
+          bundler-cache: false
+
+      - name: Set up Java (JRuby/TruffleRuby)
+        if: matrix.backend == 'java' || matrix.backend == 'graalvm'
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '21'
+
+      - name: Set up Rust (Rust backend only)
+        if: matrix.backend == 'rust'
+        uses: dtolnay/rust-toolchain@stable
+
+      - name: Install dependencies
+        working-directory: demo
+        run: bundle install
+
+      - name: Compile native extension (Rust backend only)
+        if: matrix.backend == 'rust'
+        working-directory: demo
+        run: rake compile
+
+      - name: Run tests
+        working-directory: demo
+        env:
+          DISABLE_MATRYOSHKADEMO_NATIVE: ${{ matrix.backend == 'pure-ruby' && '1' || '' }}
+        run: rake test
+
+      - name: Run benchmark
+        working-directory: demo
+        env:
+          DISABLE_MATRYOSHKADEMO_NATIVE: ${{ matrix.backend == 'pure-ruby' && '1' || '' }}
+        run: rake bench

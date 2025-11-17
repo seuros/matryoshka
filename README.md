@@ -384,6 +384,8 @@ MIT (copy freely, attribution appreciated)
 
 - **"Do I need to know Rust first?"** → No. Read Ruby code, then read Rust port side-by-side. Learn by comparison (~40% syntax coverage after 3-4 methods).
 
+- **"What about Zig?"** → Zig can provide speedup, but lacks the packaging story. Matryoshka lets gems consume published crates from [crates.io](https://crates.io). Zig is repo-dependent (no central registry). For Zig FFI anyway: [zig.rb](https://github.com/furunkel/zig.rb).
+
 ---
 
 **Start here:** [PHILOSOPHY.md](PHILOSOPHY.md) → Understand the "why" before the "how"
